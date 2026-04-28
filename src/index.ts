@@ -1,7 +1,8 @@
 import { launchBrowser } from './core/browser';
-import { hasSession } from './core/session';
 import { login } from './services/auth.service';
 import { saveSession } from './core/session';
+import { goToProfile } from './services/instagram.service';
+import { humanScroll, getPosts } from './services/scraper.service';
 
 (async () => {
   const context = await launchBrowser();
@@ -9,16 +10,25 @@ import { saveSession } from './core/session';
 
   await page.goto('https://www.instagram.com/');
 
-  const isLoggedIn = await page.locator('svg[aria-label="Home"]').count();
+  const isLoggedIn = await page.locator('nav').count();
 
   if (!isLoggedIn) {
-    console.log('No hay sesión activa, iniciando login...');
+    console.log('Login requerido...');
     await login(page);
-
     await saveSession(context);
-  } else {
-    console.log('Sesión ya activa');
   }
 
-  await page.waitForTimeout(10000);
+  const targetUser = process.argv[2] || process.env.IG_TARGET_USER;
+
+  if (!targetUser) {
+  throw new Error('Debes proporcionar un usuario de Instagram');
+  }
+
+  await goToProfile(page, targetUser);
+  await humanScroll(page);
+
+  const posts = await getPosts(page);
+
+  console.log(`Posts encontrados: ${posts.length}`);
+
 })();
