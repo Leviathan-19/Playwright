@@ -7,3 +7,8 @@ export const hasSession = (): boolean => {
 };
 
 export const getSessionPath = () => STATE_PATH;
+
+export const saveSession = async (context: any) => {
+  await context.storageState({ path: STATE_PATH });
+  console.log('Sesión guardada en state.json');
+};
