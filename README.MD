@@ -2,8 +2,8 @@
  - El sistema requiere variables de entorno en un archivo .env,
  por favor cree un .env en la raiz del proyecto e ingrese sus credenciales:
 
- - El sistema usa las librerias que se encuentran en install.txt, por favor instalelas 
- con los comandos en la termianl del proyecto 
+ - El sistema esta desarrolado en Ts por lo que necesita que tenga instalado node
+ añadi los comandos correspondientes en install.txt, solo para ser isntaladas por consola
 
 # Sistema de Web Scraping de Instagram con Playwright
 

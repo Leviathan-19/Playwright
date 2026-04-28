@@ -1,2 +1,7 @@
+npm install -D typescript ts-node @types/node
+npx tsc --init
 npm install playwright
 npx playwright install
+npm install dotenv
+npm install xlsx
+npm install uuid
