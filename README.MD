@@ -1,6 +1,13 @@
 # Nota: para el correcto funcionamiento del proyecto tome en cuenta 2 aspectos
  - El sistema requiere variables de entorno en un archivo .env,
- por favor cree un .env en la raiz del proyecto e ingrese sus credenciales:
+ por favor cree un .env en la raiz del proyecto e ingrese sus credenciales en cada una de las variables:
+
+
+IG_USER= usuario o email
+IG_PASS= contraseña
+IG_TARGET_USER= usuario a buscar
+
+HEADLESS=false
 
  - El sistema esta desarrolado en Ts por lo que necesita que tenga instalado node
  añadi los comandos correspondientes en install.txt, solo para ser isntaladas por consola
