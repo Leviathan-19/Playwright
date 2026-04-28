@@ -21,7 +21,7 @@ import { humanScroll, getPosts } from './services/scraper.service';
   const targetUser = process.argv[2] || process.env.IG_TARGET_USER;
 
   if (!targetUser) {
-  throw new Error('Debes proporcionar un usuario de Instagram');
+  throw new Error('Debes proporcionar un usuario de Instagram en el .env');
   }
 
   await goToProfile(page, targetUser);
