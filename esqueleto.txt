@@ -1,0 +1,52 @@
+playwright-ig-scraper/
+│
+├── src/
+│   ├── config/
+│   │   └── env.ts
+│   │
+│   ├── core/
+│   │   ├── browser.ts
+│   │   └── session.ts
+│   │
+│   ├── services/
+│   │   ├── auth.service.ts
+│   │   ├── instagram.service.ts
+│   │   └── scraper.service.ts
+│   │
+│   ├── utils/
+│   │   ├── delay.ts
+│   │   ├── random.ts
+│   │   └── file.ts
+│   │
+│   ├── types/
+│   │   └── post.type.ts
+│   │
+│   ├── data/
+│   │   └── output/        
+│   │
+│   └── index.ts
+│
+├── state.json             
+├── .env
+├── .gitignore
+├── package.json
+├── tsconfig.json
+└── README.md
+
+config/
+Manejo de variables de entorno
+core/
+Configuración base de Playwright
+Manejo de sesión (storageState)
+services/
+Lógica principal del scraping
+Separado por responsabilidades
+utils/
+Funciones auxiliares:
+delays
+random
+exportación
+types/
+Tipos de TypeScript (posts, etc.)
+data/output/
+Archivos generados
