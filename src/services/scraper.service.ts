@@ -102,7 +102,10 @@ export const scrapePosts = async (page: Page, limit: number = 10) => {
 
       console.log("Data extraída:", data);
 
-      results.push(data);
+      results.push({
+        url,
+        ...data,
+      });
     } catch (error) {
       if (error instanceof Error) {
         console.log("Error en este post:", error.message);
