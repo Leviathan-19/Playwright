@@ -1,128 +1,139 @@
-# Nota: para el correcto funcionamiento del proyecto tome en cuenta 2 aspectos
- - El sistema requiere variables de entorno en un archivo .env,
- por favor cree un .env en la raiz del proyecto e ingrese sus credenciales en cada una de las variables:
-
-
-IG_USER= usuario o email
-IG_PASS= contraseña
-IG_TARGET_USER= usuario a buscar
-
-HEADLESS=false
-
- - El sistema esta desarrolado en Ts por lo que necesita que tenga instalado node
- añadi los comandos correspondientes en install.txt, solo para ser isntaladas por consola
-
 # Sistema de Web Scraping de Instagram con Playwright
 
 ## Descripción General
 
-Este sistema tiene como objetivo automatizar la extracción de información pública de perfiles de Instagram utilizando Playwright con TypeScript. El proceso simula el comportamiento de un usuario real para evitar bloqueos y restricciones por parte de la plataforma.
+Este sistema permite automatizar la extracción de información pública de perfiles de Instagram utilizando Playwright con TypeScript.
+
+El scraper simula el comportamiento de un usuario real, evitando en lo posible restricciones o bloqueos de la plataforma.
 
 El sistema permite:
 
-- Gestionar sesiones autenticadas mediante almacenamiento de estado (cookies).
-- Acceder a perfiles públicos específicos.
-- Validar la existencia y disponibilidad del contenido.
-- Extraer información de los últimos posts (likes, comentarios, etc.).
-- Exportar los datos recolectados en formatos JSON y XLSX.
-
-El enfoque evita logins repetitivos mediante el uso de sesiones persistentes, mejorando la eficiencia y reduciendo el riesgo de bloqueos.
+- Iniciar sesión en Instagram (una sola vez)
+- Guardar sesión persistente (`state.json`)
+- Acceder a perfiles públicos
+- Obtener los últimos posts
+- Extraer información relevante:
+  - Likes
+  - Comentarios
+  - Descripción
+  - Fecha
+  - URL del post
+- Exportar datos en:
+  - JSON
+  - XLSX
+  - CSV
 
 ---
 
-## Flujo del Sistema
+# Requisitos
 
-### 1. Acceso a Instagram
-- Navegar a: https://www.instagram.com/
+Antes de ejecutar el proyecto, asegúrate de tener instalado:
 
-### 2. Gestión de Sesión 
+- Node.js (versión recomendada: 18+)
+- npm
 
-#### 2.1 Verificación de sesión existente
-- Comprobar si existe el archivo: state.json
+---
 
-#### 2.2 Carga de sesión
-- Si existe, cargar el estado de sesión almacenado.
+# Instalación
 
-#### 2.3 Validación de sesión
-- Verificar si el usuario está autenticado correctamente:
-- Presencia del feed
-- Acceso al perfil
+Ejecuta los siguientes comandos en la raíz del proyecto:
 
-#### 2.4 Proceso de login (si la sesión no es válida)
-- Ingresar:
-- Usuario o correo (desde variables de entorno)
-- Contraseña (desde variables de entorno)
-- Si se solicita verificación:
-- Solicitar código por consola
-- Ingresar código manualmente
+```bash
+npm install
+npx playwright install
+npm install dotenv
+npm install xlsx
+npm install uuid
+```
+# Se debe crear un archivo .env en la raíz del proyecto:
 
-#### 2.5 Almacenamiento de sesión
-- Guardar sesión en: state.json
+IG_USER=
+IG_PASS=
+IG_TARGET_USER=
 
-### 3. Acceso a Perfil de Usuario
-- Navegar directamente a: https://www.instagram.com/{usuario}/
+HEADLESS=false
+---------------
+IG_USER: usuario o correo de Instagram
+IG_PASS: contraseña
+IG_TARGET_USER: usuario que quieres scrapear
+HEADLESS:
+false → ves el navegador (recomendado)
+true → oculto
 
-### 4. Validaciones del Perfil
-- Verificar si el perfil existe
-- Verificar si es público
-- Verificar si contiene publicaciones
+# Primera Ejecución (IMPORTANTE)
+# Paso 1: Login Manual
+En la primera ejecución:
+```bash
+npm run dev
+```
+El sistema abrirá el navegador
+Te pedirá iniciar sesión manualmente
+Ingresa:
+Usuario
+Contraseña
+Si Instagram pide código de verificación:
+Ingresa el código manualmente
+# Paso 2: Guardado de Sesión
 
-### 5. Simulación de Comportamiento Humano
-Implementar acciones para evitar detección como bot:
-- Scrolls aleatorios
-- Movimientos de mouse
-- Pausas variables entre acciones
-- Interacciones no lineales (scroll arriba/abajo)
+Después del login exitoso:
+Se genera automáticamente el archivo:
+state.json
 
-### 6. Obtención de Publicaciones
-- Identificar y recolectar los últimos 10 posts del perfil
+Este archivo contiene:
+Cookies
+Sesión activa
+# Paso 3: Ejecuciones posteriores
 
-### 7. Procesamiento por Post
-Para cada publicación:
-- Abrir el post
-- Esperar carga completa
-- Extraer:
-- Número de likes
-- Número de comentarios
-- Texto del post
-- Fecha de publicación
-- Realizar pausas aleatorias
-- Cerrar el post
+En futuras ejecuciones:
 
-### 8. Manejo de Tiempos
-- Esperas entre acciones: 3 a 8 segundos
-- Esperas entre posts: 8 a 15 segundos
-- Pausas largas ocasionales: 20 a 40 segundos
+npm run dev
 
-### 9. Almacenamiento de Resultados
-Exportar los datos recolectados en:
+- NO necesitarás volver a iniciar sesión
+- El sistema reutiliza state.json
 
-- JSON
-- XLSX
+Flujo del Sistema
+1. Acceso a Instagram
+Navega a la página principal
+2. Verificación de sesión
+Si existe state.json → usa sesión guardada
+Si no → realiza login
+3. Acceso al perfil
+Navega a:
+https://www.instagram.com/{usuario}/
+4. Validaciones
+Usuario existe
+Perfil es público
+Tiene publicaciones
+5. Simulación de comportamiento humano
+Scrolls
+Pausas aleatorias
+Interacciones controladas
+6. Obtención de posts
+Se obtienen los últimos 10 posts
+7. Procesamiento de posts
 
-## Consideraciones Técnicas
+Para cada post:
 
-### Manejo de errores
+Accede al post
+Espera carga completa
+Extrae:
+Likes (parseados: 121K → 121000)
+Comentarios
+Descripción limpia
+Fecha formateada
+URL del post
+8. Exportación de datos
 
-El sistema debe contemplar:
+Los datos se guardan automáticamente en:
 
-- Sesión expirada
-- Captchas
-- Perfil privado
-- Usuario inexistente
-- Fallos de carga
-- Selectores no encontrados
+src/data/output/
 
-### Limitaciones
+Con formato:
 
-- Instagram puede cambiar su estructura HTML
-- Existe riesgo de bloqueo por automatización
-- El scraping es limitado a contenido público
-- No se recomienda ejecución masiva sin proxies
+metadata_usuario_fecha.json
+metadata_usuario_fecha.xlsx
+metadata_usuario_fecha.csv
 
-### Recomendaciones
+Ejemplo:
 
-- Usar siempre navegador en modo no headless
-- Evitar patrones repetitivos
-- Reutilizar sesiones guardadas
-- Mantener selectores robustos
+metadata_leonardodicapriro_2026-04-28T21-40-10.json
