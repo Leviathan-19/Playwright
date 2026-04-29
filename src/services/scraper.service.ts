@@ -1,4 +1,5 @@
 import { Page } from "playwright";
+import { parseNumber } from "../utils/file";
 
 export const humanScroll = async (page: Page) => {
   for (let i = 0; i < 5; i++) {
@@ -23,7 +24,7 @@ export const getPosts = async (page: Page) => {
 };
 
 export const extractPostData = async (page: Page) => {
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
 
   let likes = 0;
   let comments = 0;
@@ -31,33 +32,32 @@ export const extractPostData = async (page: Page) => {
   let date = "";
 
   try {
-    description =
+    const raw =
       (await page
         .locator('meta[property="og:description"]')
         .getAttribute("content")) || "";
-  } catch {}
 
-  try {
-    const title =
-      (await page
-        .locator('meta[property="og:title"]')
-        .getAttribute("content")) || "";
+    const regex =
+      /([\d.,KkMm]+)\s+likes,\s+([\d.,KkMm]+)\s+comments\s+-\s+.*?:\s+"([\s\S]*)"/;
 
-    const matchLikes = title.match(/([\d,.]+)\s+likes/);
-    if (matchLikes && matchLikes[1]) {
-      likes = parseInt(matchLikes[1].replace(/,/g, "")) || 0;
+    const match = raw.match(regex);
+
+    if (match && match[1] && match[2] && match[3]) {
+      likes = parseNumber(match[1]);
+      comments = parseNumber(match[2]);
+      description = match[3].trim();
     }
   } catch {}
 
   try {
-  const timeLocator = page.locator('time').first();
-  await timeLocator.waitFor({ timeout: 10000 });
+    const isoDate =
+      (await page.locator("time").first().getAttribute("datetime")) || "";
 
-  date = await timeLocator.getAttribute('datetime') || '';
-} catch {}
+    if (isoDate) {
+      const d = new Date(isoDate);
 
-  try {
-    comments = await page.locator("ul li").count();
+      date = d.toLocaleString(); // formato legible
+    }
   } catch {}
 
   return {
